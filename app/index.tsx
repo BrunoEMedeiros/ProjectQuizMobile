@@ -1,9 +1,20 @@
-import * as React from "react";
-import { Text, View } from "react-native";
+import React, { useState } from "react";
+import { Pressable, Text, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, Resolver, useForm } from "react-hook-form";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function App() {
+  const [passwordVisible, setPasswordVisible] = useState<boolean>(true);
+
+  const loginSchema = z.object({
+    email: z.email().min(1, "Não pode ser vazio"),
+    senha: z.string().min(5, "Senha deve ter 5 caracteres"),
+  });
+
+  type LoginType = z.infer<typeof loginSchema>;
+
   const {
     register,
     handleSubmit,
@@ -13,10 +24,11 @@ export default function App() {
     reset,
     setValue,
     getValues,
-  } = useForm({
+  } = useForm<LoginType>({
+    resolver: zodResolver(loginSchema) as unknown as Resolver<LoginType>,
     defaultValues: {
       email: "",
-      password: "",
+      senha: "",
     },
   });
 
@@ -26,10 +38,8 @@ export default function App() {
 
   return (
     <View className="flex-1 justify-center items-center">
-      {/* Add items-center for horizontal centering */}
       <Text className="text-2xl text-center">Junte-se ao Photo</Text>
       <View className="gap-4 p-6 w-full">
-        {/* Add w-full to stretch inner view */}
         <Controller
           name="email"
           control={control}
@@ -44,9 +54,9 @@ export default function App() {
             );
           }}
         />
-        {errors.email && <Text>This is required.</Text>}
+        {errors.email && <Text>{errors.email.message}</Text>}
         <Controller
-          name="password"
+          name="senha"
           control={control}
           render={({ field: { onChange, onBlur, value } }) => {
             return (
@@ -55,13 +65,18 @@ export default function App() {
                 label="Senha"
                 value={value}
                 onChangeText={onChange}
-                secureTextEntry
-                right={<TextInput.Icon icon="eye" />}
+                secureTextEntry={passwordVisible}
+                right={
+                  <TextInput.Icon
+                    icon={passwordVisible ? "eye" : "eye-off"}
+                    onPress={() => setPasswordVisible(!passwordVisible)}
+                  />
+                }
               />
             );
           }}
         />
-        {errors.password && <Text>This is required.</Text>}
+        {errors.senha && <Text>{errors.senha.message}</Text>}
         <Button
           icon="login"
           mode="contained"
