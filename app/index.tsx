@@ -1,44 +1,22 @@
-import React, { useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import React from "react";
+import { Text, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
-import { Controller, Resolver, useForm } from "react-hook-form";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller } from "react-hook-form";
+import useLoginViewModel from "@/ViewModel/useLoginViewModel";
 
 export default function App() {
-  const [passwordVisible, setPasswordVisible] = useState<boolean>(true);
-
-  const loginSchema = z.object({
-    email: z.email().min(1, "Não pode ser vazio"),
-    senha: z.string().min(5, "Senha deve ter 5 caracteres"),
-  });
-
-  type LoginType = z.infer<typeof loginSchema>;
-
   const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    watch,
+    onSubmit,
+    passwordVisible,
+    setPasswordVisible,
     control,
-    reset,
-    setValue,
-    getValues,
-  } = useForm<LoginType>({
-    resolver: zodResolver(loginSchema) as unknown as Resolver<LoginType>,
-    defaultValues: {
-      email: "",
-      senha: "",
-    },
-  });
-
-  const onSubmit = (data: any) => {
-    console.log(data);
-  };
+    errors,
+    handleSubmit,
+  } = useLoginViewModel();
 
   return (
     <View className="flex-1 justify-center items-center">
-      <Text className="text-2xl text-center">Junte-se ao Photo</Text>
+      <Text className="text-2xl text-center">Venha responder com a gente</Text>
       <View className="gap-4 p-6 w-full">
         <Controller
           name="email"
