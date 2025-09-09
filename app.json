@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "photo_app",
-    "slug": "photo_app",
+    "name": "project_quiz",
+    "slug": "project_quiz",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/adaptive-icon.png",
@@ -15,7 +15,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.photo-app"
+      "bundleIdentifier": "com.anonymous.project_quiz"
     },
     "android": {
       "adaptiveIcon": {
@@ -28,7 +28,7 @@
       },
       "softwareKeyboardLayoutMode": "resize",
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.photo_app"
+      "package": "com.anonymous.project_quiz"
     },
     "web": {
       "bundler": "metro",
