@@ -1,8 +1,9 @@
 import React from "react";
 import { Text, View } from "react-native";
-import { Button, TextInput } from "react-native-paper";
+import { Button, Portal, Snackbar, TextInput } from "react-native-paper";
 import { Controller } from "react-hook-form";
 import useLoginViewModel from "@/ViewModel/useLoginViewModel";
+import { useSnackBarContext } from "@/context/snackbar.context";
 
 export default function App() {
   const {
@@ -13,6 +14,8 @@ export default function App() {
     errors,
     handleSubmit,
   } = useLoginViewModel();
+
+  const { message, type, open, notify } = useSnackBarContext();
 
   return (
     <View className="flex-1 justify-center items-center">
@@ -65,6 +68,25 @@ export default function App() {
           Entrar
         </Button>
       </View>
+      <Portal>
+        {open ? (
+          <Snackbar
+            visible={open}
+            theme={{
+              colors: {
+                inverseSurface: "#070A0E", // Background color
+                inverseOnSurface: "#F2F3F4", // Text/icon color
+              },
+            }}
+            onDismiss={() => {
+              notify({ message: null, open: false, type: "info" });
+            }}
+            wrapperStyle={{ bottom: 40, alignSelf: "stretch" }}
+          >
+            {message}
+          </Snackbar>
+        ) : null}
+      </Portal>
     </View>
   );
 }
