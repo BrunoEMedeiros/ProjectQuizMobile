@@ -2,6 +2,7 @@ import { loginSchema, LoginType } from "@/schemas/login.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useState } from "react";
 import { Resolver, useForm } from "react-hook-form";
+
 export const useLoginViewModel = () => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(true);
 
