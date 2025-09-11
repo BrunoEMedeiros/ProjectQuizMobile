@@ -5,6 +5,9 @@ import { Resolver, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { handleLogin } from "@/service/login.service";
 import { useSnackBarContext } from "@/context/snackbar.context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { storeData } from "@/utils/async-storage";
+import { router } from "expo-router";
 
 export const useLoginViewModel = () => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(true);
@@ -34,7 +37,8 @@ export const useLoginViewModel = () => {
       await handleLogin({ email: email, senha: senha }),
     onSuccess: async (data) => {
       if (data) {
-        console.info("Logado");
+        await storeData(data.id_user.toString());
+        router.replace("/quiz");
       } else {
         notify({
           message: "Usuario ou senha incorretos",

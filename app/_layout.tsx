@@ -7,7 +7,7 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import Header from "@/components/Header";
+import Header from "@/components/Header/Header";
 
 const queryClient = new QueryClient();
 
@@ -17,9 +17,10 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <SnackBarContextProvider>
           <PaperProvider>
-            <Stack>
-              <Stack.Screen name="index" options={{ headerShown: false }} />
-              <Stack.Screen name="score" options={{ headerShown: false }} />
+            <Stack screenOptions={{ header: Header }}>
+              <Stack.Screen name="index" />
+              <Stack.Screen name="login" />
+              <Stack.Screen name="cadastro" />
               <Stack.Screen name="quiz" />
             </Stack>
           </PaperProvider>

@@ -7,33 +7,49 @@ import { useSnackBarContext } from "@/context/snackbar.context";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useScoreViewModel from "@/ViewModel/useScoreVIewModel";
+import RankingCard from "@/components/RankingCard/RankingCard";
+import { getValueFromStorage } from "@/utils/async-storage";
 const ScorePage = () => {
-  const {
-    data,
-    isError,
-    error,
-    status,
-  } = useScoreViewModel();
-
-  const { message, type, open, notify } = useSnackBarContext();
-
+  const { userId, data, isError, error, status } = useScoreViewModel();
   const router = useRouter();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View>
-        <Text style={styles.title}>Ranking de pontuação</Text>
-        <FlatList
-          data={data}
-          numColumns={2}
-          renderItem={({ item }) => {
-            return (
-             <Text></Text>
-            );
+    <View style={styles.container}>
+      <View className="flex-row justify-between items-center p-8">
+        <Text
+          numberOfLines={2}
+          adjustsFontSizeToFit={true}
+          style={styles.title}
+        >
+          Melhores pontuações
+        </Text>
+        <Pressable
+          onPress={async () => {
+            if (await userId) {
+              return router.push("/quiz");
+            }
+            return router.navigate("/login");
           }}
-        />
+          className="bg-black w-24 h-16 justify-center items-center border rounded-md"
+        >
+          <Text className="text-white">Jogar</Text>
+        </Pressable>
       </View>
-    </SafeAreaView>
+      <FlatList
+        keyExtractor={(item) => item.id_user.toString()}
+        data={data}
+        numColumns={2}
+        contentContainerStyle={{ flexGrow: 1 }}
+        columnWrapperStyle={{ gap: 10 }}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => {
+          return <RankingCard score={item.total_acertos} name={item.nome} />;
+        }}
+        ItemSeparatorComponent={() => (
+          <View style={{ height: 10, width: 10 }}></View>
+        )}
+      />
+    </View>
   );
 };
 
@@ -49,6 +65,9 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     marginBottom: 22,
+    textAlign: "center",
+    color: "#FA9F42",
+    width: 160,
   },
   input: {
     borderWidth: 1,
