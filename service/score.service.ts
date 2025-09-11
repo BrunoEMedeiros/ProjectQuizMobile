@@ -1,28 +1,20 @@
-import { ScoreType } from "@/schemas/Score.schema";
+import { LoginType } from "@/schemas/login.schema";
 import { api } from "@/utils/axios.config";
 import { AxiosError } from "axios";
 
-type ScoreResponse = {
-    id: string;
-    nome: string;
-    acertos: number;
+export type ScoreResponse = {
+  id_user: number;
+  nome: string;
+  total_acertos: number;
 };
 
-export async function handleScore(scoreData: ScoreType): Promise<ScoreResponse> {
-    try {
-        const response = await api.get(`/acertos`, {
-            params: { id_user: scoreData.id,}
-        });
-
-        return response.data as ScoreResponse;
-
-    } catch (error) {
-        if (error instanceof AxiosError) {
-            const message = error.response?.data?.message ||
-                error.response?.data?.error ||
-                'Erro ao consultar score';
-            throw new Error(message);
-        }
-        throw new Error('Erro inesperado');
-    }
+export async function fecthScore(): Promise<ScoreResponse[]> {
+  try {
+    const { data } = await api.get<ScoreResponse[]>("/acertos");
+    return data;
+  } catch (error) {
+    const resposta: ScoreResponse[] = [];
+    console.error("Unexpected error:", error);
+    return resposta;
+  }
 }
