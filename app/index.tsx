@@ -1,93 +1,59 @@
 import React from "react";
-import { Text, View } from "react-native";
-import { Button, Portal, Snackbar, TextInput } from "react-native-paper";
-import { Controller } from "react-hook-form";
-import useLoginViewModel from "@/ViewModel/useLoginViewModel";
-import { useSnackBarContext } from "@/context/snackbar.context";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import useScoreViewModel from "@/ViewModel/useScoreVIewModel";
 
-export default function App() {
-  const {
-    onSubmit,
-    passwordVisible,
-    setPasswordVisible,
-    control,
-    errors,
-    handleSubmit,
-  } = useLoginViewModel();
+export default function ScorePage() {
+    const { scoreCard, onSubmit, handleSubmit } = useScoreViewModel();
 
-  const { message, type, open, notify } = useSnackBarContext();
+    return (
+        <View style={styles.container}>
+            {/* Score Card */}
+            {scoreCard && (
+                <View style={styles.elipseContainer}>
+                    <View style={styles.elipse}>
+                        <Text style={styles.acertosText}>{scoreCard.acertos}</Text>
+                    </View>
+                    <Text style={styles.userName}>{scoreCard.nome}</Text>
+                    <Text style={styles.userPosition}>#{scoreCard.posicao ?? 1}</Text>
+                </View>
+            )}
 
-  return (
-    <View className="flex-1 justify-center items-center">
-      <Text className="text-2xl text-center">Venha responder com a gente</Text>
-      <View className="gap-4 p-6 w-full">
-        <Controller
-          name="email"
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => {
-            return (
-              <TextInput
-              
-                mode="outlined"
-                label="Email"
-                value={value}
-                onChangeText={onChange}
-              />
-            );
-          }}
-        />
-        {errors.email && <Text>{errors.email.message}</Text>}
-        <Controller
-          name="senha"
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => {
-            return (
-              <TextInput
-                mode="outlined"
-                label="Senha"
-                value={value}
-                onChangeText={onChange}
-                secureTextEntry={passwordVisible}
-                right={
-                  <TextInput.Icon
-                    icon={passwordVisible ? "eye" : "eye-off"}
-                    onPress={() => setPasswordVisible(!passwordVisible)}
-                  />
-                }
-              />
-            );
-          }}
-        />
-        {errors.senha && <Text>{errors.senha.message}</Text>}
-        <Button
-          icon="login"
-          mode="contained"
-          onPress={handleSubmit(onSubmit)}
-          buttonColor="#1591EA"
-          style={{ width: "80%", alignSelf: "center" }}
-        >
-          Entrar
-        </Button>
-      </View>
-      <Portal>
-        {open ? (
-          <Snackbar
-            visible={open}
-            theme={{
-              colors: {
-                inverseSurface: "#070A0E", // Background color
-                inverseOnSurface: "#F2F3F4", // Text/icon color
-              },
-            }}
-            onDismiss={() => {
-              notify({ message: null, open: false, type: "info" });
-            }}
-            wrapperStyle={{ bottom: 40, alignSelf: "stretch" }}
-          >
-            {message}
-          </Snackbar>
-        ) : null}
-      </Portal>
-    </View>
-  );
+        </View>
+    );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#ffffff",
+        paddingTop: 40,
+        paddingHorizontal: 20,
+        alignItems: "center",
+    },
+    elipseContainer: {
+        alignItems: "center",
+    },
+    elipse: {
+        width: 150,
+        height: 150,
+        borderRadius: 75,
+        backgroundColor: "#f0f0f0",
+        justifyContent: "center",
+        alignItems: "center",
+        marginBottom: 16,
+    },
+    acertosText: {
+        fontSize: 48,
+        fontWeight: "bold",
+        color: "#333",
+    },
+    userName: {
+        fontSize: 20,
+        fontWeight: "600",
+        marginBottom: 4,
+    },
+    userPosition: {
+        fontSize: 18,
+        color: "#666",
+    },
+});

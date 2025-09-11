@@ -3,6 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Resolver } from "react-hook-form";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { AxiosError } from "axios";
+import { api } from "@/utils/axios.config";
 
 export const useScoreViewModel = () => {
     const [scoreCard, setScoreCard] = useState<any | null>(null);
@@ -14,7 +16,7 @@ export const useScoreViewModel = () => {
     } = useForm<ScoreType>({
         resolver: zodResolver(scoreSchema) as unknown as Resolver<ScoreType>,
         defaultValues: {
-            id: uuidv4(), 
+            id: uuidv4(),
             nome: "",
             acertos: 0,
         },
@@ -22,29 +24,24 @@ export const useScoreViewModel = () => {
 
     const onSubmit = async (data: ScoreType) => {
         try {
-            const response = await axios.post("http://192.168.1.10/acertos", {
-                method: "GET", 
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    id_user: data.id,
-                }),
+            const response = await api.get("/scores", {
+                params: { id_user: data.id },
             });
 
-            const result = await response.json();
+            const result = response.data;
 
-            if (!response.ok) {
-                throw new Error(result.message || "Erro ao consultar acertos");
-            }
-
-            // junta o que veio do backend com os dados do usuário
+            // Atualiza o scoreCard com os dados da API e o nome do front
             setScoreCard({
-                ...data,
-                acertos: result[0]?.acertos ?? 0,
+                id: data.id,
+                nome: data.nome,
+                acertos: result[0]?.acertos ?? 0, // retorna acertos
             });
-        } catch (error) {
-            console.error("Erro:", error);
+        } catch (error: any) {
+            if (error instanceof AxiosError) {
+                console.error("Erro na API:", error.response?.data || error.message);
+            } else {
+                console.error("Erro inesperado:", error);
+            }
         }
     };
 
