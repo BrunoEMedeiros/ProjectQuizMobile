@@ -1,53 +1,73 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
-  Modal,
   StyleSheet,
-  FlatList,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import {useQuizViewModel} from "@/ViewModel/useQuizViewModel";
-import { Portal, Snackbar,} from "react-native-paper";
-import { boolean } from "zod";
+import { useQuizViewModel } from "@/ViewModel/useQuizViewModel";
+import { Portal, Snackbar } from "react-native-paper";
+import { useSnackBarContext } from "@/context/snackbar.context";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function QuizModal({ visible, }: { visible: boolean; onClose: () => void }) {
+export default function QuizScreen() {
   const { perguntas, isError, error } = useQuizViewModel();
+  const { message, type, open, notify } = useSnackBarContext();
 
-  function notify(arg0: { message: null; open: boolean; type: string; }) {
-    throw new Error("Function not implemented.");
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const handleNext = () => {
+    if (currentIndex < perguntas.length - 1) {
+      setCurrentIndex((prev) => prev + 1);
+    } else {
+      notify({
+        message: "Quiz finalizado!",
+        type: "success",
+        open: true,
+      });
+    }
+  };
+
+  if (isError) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.error}>Erro: {String(error)}</Text>
+      </View>
+    );
   }
 
-  return (
-    <View>
- <Modal visible={visible} animationType="slide" transparent>
-      <View style={styles.overlay}>
-        <View style={styles.modalContent}>
-          <Text style={styles.title}>Hora do Quiz!</Text>
-
-          {isError ? (
-            <Text style={styles.error}>Erro: {String(error)}</Text>
-          ) : !perguntas.length ? (
-            <ActivityIndicator size="large" color="#fff" />
-          ) : (
-            <FlatList
-              data={perguntas}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item, index }) => (
-                <View style={styles.questionCard}>
-                  <Text style={styles.question}>
-                    {index + 1}. {item.pergunta}
-                  </Text>
-                </View>
-              )}
-            />
-          )}
-        </View>
+  if (!perguntas.length) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#fff" />
+        <Text style={styles.loadingText}>Carregando perguntas...</Text>
       </View>
-    </Modal>
-     <Portal>
-        {open() ? (
+    );
+  }
+
+  const perguntaAtual = perguntas[currentIndex];
+
+  return (
+    <SafeAreaView>
+    <View style={styles.container}>
+      <Text style={styles.title}>Hora do Quiz!</Text>
+
+      <View style={styles.questionCard}>
+        <Text style={styles.question}>
+          {currentIndex + 1}. {perguntaAtual.pergunta}
+        </Text>
+      </View>
+
+      <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+        <Text style={styles.nextButtonText}>
+          {currentIndex < perguntas.length - 1 ? "Próxima" : "Finalizar"}
+        </Text>
+      </TouchableOpacity>
+
+      {/* Snackbar */}
+      <Portal>
+        {open ? (
           <Snackbar
             visible={true}
             theme={{
@@ -58,31 +78,25 @@ export default function QuizModal({ visible, }: { visible: boolean; onClose: () 
             }}
             onDismiss={() => {
               notify({ message: null, open: false, type: "info" });
-            } }
-            wrapperStyle={{ bottom: 40, alignSelf: "stretch" }} children={undefined}          >
+            }}
+            wrapperStyle={{ bottom: 40, alignSelf: "stretch" }}
+          >
+            {message}
           </Snackbar>
         ) : null}
       </Portal>
-
     </View>
-   
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  overlay: {
+  container: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)", // fundo semi-transparente
+    backgroundColor: "#1E3A8A", // fundo azul
     justifyContent: "center",
     alignItems: "center",
-  },
-  modalContent: {
-    width: "90%",
-    height: "80%",
-    backgroundColor: "#1E3A8A", // azul (tailwind: blue-900)
-    borderRadius: 12,
     padding: 20,
-    elevation: 5,
   },
   title: {
     fontSize: 22,
@@ -93,19 +107,37 @@ const styles = StyleSheet.create({
   },
   questionCard: {
     backgroundColor: "#3B82F6", // azul claro
-    padding: 15,
+    padding: 20,
     borderRadius: 8,
-    marginBottom: 12,
+    marginBottom: 20,
+    width: "100%",
   },
   question: {
-    fontSize: 16,
+    fontSize: 18,
     color: "#fff",
+    textAlign: "center",
+  },
+  nextButton: {
+    backgroundColor: "#2563EB",
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  nextButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
   },
   error: {
     color: "red",
     textAlign: "center",
     marginVertical: 20,
   },
- 
+  loadingText: {
+    marginTop: 10,
+    color: "#fff",
+    fontSize: 16,
+  },
 });
-
