@@ -1,20 +1,19 @@
 import React from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text, View, FlatList, StyleSheet } from "react-native";
 import { Button, Portal, Snackbar, TextInput } from "react-native-paper";
 import { Controller } from "react-hook-form";
 import useLoginViewModel from "@/ViewModel/useLoginViewModel";
 import { useSnackBarContext } from "@/context/snackbar.context";
 import { useRouter } from "expo-router";
-
-export default function App() {
+import { SafeAreaView } from "react-native-safe-area-context";
+import useScoreViewModel from "@/ViewModel/useScoreVIewModel";
+const ScorePage = () => {
   const {
-    onSubmit,
-    passwordVisible,
-    setPasswordVisible,
-    control,
-    errors,
-    handleSubmit,
-  } = useLoginViewModel();
+    data,
+    isError,
+    error,
+    status,
+  } = useScoreViewModel();
 
   const { message, type, open, notify } = useSnackBarContext();
 
@@ -29,40 +28,10 @@ export default function App() {
           numColumns={2}
           renderItem={({ item }) => {
             return (
-              <TextInput
-                mode="outlined"
-                label="Senha"
-                value={value}
-                onChangeText={onChange}
-                secureTextEntry={passwordVisible}
-                right={
-                  <TextInput.Icon
-                    icon={passwordVisible ? "eye" : "eye-off"}
-                    onPress={() => setPasswordVisible(!passwordVisible)}
-                  />
-                }
-              />
+             <Text></Text>
             );
           }}
         />
-        {errors.senha && (
-          <Text className="color-rose-700">{errors.senha.message}</Text>
-        )}
-        <Button
-          icon="login"
-          mode="contained"
-          onPress={handleSubmit(onSubmit)}
-          buttonColor="#1591EA"
-          style={{ width: "60%", alignSelf: "center" }}
-        >
-          <Text className="text-xl">Entrar</Text>
-        </Button>
-        <Pressable
-          style={{ marginTop: 20 }}
-          onPress={() => router.navigate("/cadastro")}
-        >
-          <Text className="text-center text-xl">Cadastre-se</Text>
-        </Pressable>
       </View>
     </SafeAreaView>
   );
