@@ -5,6 +5,7 @@ import { Resolver, useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { fecthPerguntas } from "@/service/quiz.service";
 import { useSnackBarContext } from "@/context/snackbar.context";
+import { getValueFromStorage } from "@/utils/async-storage";
 
 export const useQuizViewModel = () => {
     const { notify } = useSnackBarContext();
@@ -16,8 +17,12 @@ export const useQuizViewModel = () => {
     })
 
     return {
+         userId:
+              getValueFromStorage().then((id) => {
+                return id;
+              }) || null,
         perguntas: data ? data : [],
         isError, 
-        error
+        error,
     }
 }

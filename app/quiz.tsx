@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
+  FlatList,
   TouchableOpacity,
+  Dimensions,
   ActivityIndicator,
 } from "react-native";
 import { useQuizViewModel } from "@/ViewModel/useQuizViewModel";
@@ -11,15 +13,20 @@ import { Portal, Snackbar } from "react-native-paper";
 import { useSnackBarContext } from "@/context/snackbar.context";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+const { width, height } = Dimensions.get("window");
+
 export default function QuizScreen() {
   const { perguntas, isError, error } = useQuizViewModel();
-  const { message, type, open, notify } = useSnackBarContext();
+  const { message, open, notify } = useSnackBarContext();
 
+  const flatListRef = useRef<FlatList>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleNext = () => {
     if (currentIndex < perguntas.length - 1) {
-      setCurrentIndex((prev) => prev + 1);
+      const nextIndex = currentIndex + 1;
+      setCurrentIndex(nextIndex);
+      flatListRef.current?.scrollToIndex({ index: nextIndex });
     } else {
       notify({
         message: "Quiz finalizado!",
@@ -46,24 +53,40 @@ export default function QuizScreen() {
     );
   }
 
-  const perguntaAtual = perguntas[currentIndex];
-
   return (
-    <SafeAreaView>
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+    
       <Text style={styles.title}>Hora do Quiz!</Text>
 
-      <View style={styles.questionCard}>
-        <Text style={styles.question}>
-          {currentIndex + 1}. {perguntaAtual.pergunta}
-        </Text>
-      </View>
-
-      <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+      <FlatList
+        ref={flatListRef}
+        data={perguntas}
+        horizontal
+        scrollEnabled={false}
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item, index }) => (
+          <View style={[styles.page, { width }]}>
+            <View style={styles.questionCard}>
+              <Text style={styles.question}>
+                {index + 1}. {item.pergunta}
+              </Text>
+            </View>
+          </View>
+        )}
+        onMomentumScrollEnd={(e) => {
+          const newIndex = Math.round(e.nativeEvent.contentOffset.x / width);
+          setCurrentIndex(newIndex);
+        }}ListFooterComponent={()=><TouchableOpacity style={styles.nextButton} onPress={handleNext}>
         <Text style={styles.nextButtonText}>
           {currentIndex < perguntas.length - 1 ? "Próxima" : "Finalizar"}
         </Text>
-      </TouchableOpacity>
+      </TouchableOpacity>}
+
+      />
+
+      
 
       {/* Snackbar */}
       <Portal>
@@ -72,8 +95,8 @@ export default function QuizScreen() {
             visible={true}
             theme={{
               colors: {
-                inverseSurface: "#070A0E", // Background color
-                inverseOnSurface: "#F2F3F4", // Text/icon color
+                inverseSurface: "#070A0E",
+                inverseOnSurface: "#F2F3F4",
               },
             }}
             onDismiss={() => {
@@ -85,7 +108,6 @@ export default function QuizScreen() {
           </Snackbar>
         ) : null}
       </Portal>
-    </View>
     </SafeAreaView>
   );
 }
@@ -94,23 +116,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#1E3A8A", // fundo azul
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
+    paddingTop: 40,
+    paddingBottom: 40,
+    paddingHorizontal: 20,
   },
   title: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 20,
     color: "#fff",
   },
+  page: {
+    justifyContent: "center",
+    alignItems: "center",
+    height: height * 0.5,
+    flex: 1
+  },
   questionCard: {
-    backgroundColor: "#3B82F6", // azul claro
+    backgroundColor: "#3B82F6",
     padding: 20,
     borderRadius: 8,
-    marginBottom: 20,
-    width: "100%",
+    width: "90%",
   },
   question: {
     fontSize: 18,
@@ -119,16 +146,14 @@ const styles = StyleSheet.create({
   },
   nextButton: {
     backgroundColor: "#2563EB",
-    paddingVertical: 15,
-    paddingHorizontal: 40,
+    paddingVertical: 10,
     borderRadius: 8,
-    marginTop: 10,
+    alignItems: "center",
   },
   nextButtonText: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
-    textAlign: "center",
   },
   error: {
     color: "red",
@@ -139,5 +164,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: "#fff",
     fontSize: 16,
+    textAlign: "center",
   },
 });

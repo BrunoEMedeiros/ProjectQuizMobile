@@ -1,4 +1,4 @@
-import { LoginType } from "@/schemas/login.schema";
+
 import { api } from "@/utils/axios.config";
 import { AxiosError } from "axios";
 

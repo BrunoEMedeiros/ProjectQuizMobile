@@ -13,6 +13,8 @@ const ScorePage = () => {
   const { userId, data, isError, error, status } = useScoreViewModel();
   const router = useRouter();
 
+  console.log(data)
+
   return (
     <View style={styles.container}>
       <View className="flex-row justify-between items-center p-8">
