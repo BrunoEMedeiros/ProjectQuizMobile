@@ -1,13 +1,15 @@
-
 import { api } from "@/utils/axios.config";
 import { AxiosError } from "axios";
 
-
-type Pergunta = { 
-  id: string;
-  pergunta: string;
-  status: string;
-}
+type Pergunta = {
+  id_quest: string;
+  enunciado: string;
+  alt_a: string;
+  alt_b: string;
+  alt_c: string;
+  alt_d: string;
+  alt_e: string;
+};
 
 // type fetchPerguntasProps = {
 //     perguntas: string,
@@ -17,13 +19,11 @@ type Pergunta = {
 //     alternativa_d: string,
 // }
 
-
 export async function fecthPerguntas(): Promise<Pergunta[] | null> {
   try {
     const { data } = await api.get<Pergunta[] | null>("/perguntas");
     return data;
-  } 
-  catch (error) {
+  } catch (error) {
     if (error instanceof AxiosError) {
       if (error.response?.status == 500) {
         return null;

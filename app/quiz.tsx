@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -11,7 +11,6 @@ import {
 import { useQuizViewModel } from "@/ViewModel/useQuizViewModel";
 import { Portal, Snackbar } from "react-native-paper";
 import { useSnackBarContext } from "@/context/snackbar.context";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width, height } = Dimensions.get("window");
 
@@ -19,22 +18,22 @@ export default function QuizScreen() {
   const { perguntas, isError, error } = useQuizViewModel();
   const { message, open, notify } = useSnackBarContext();
 
-  const flatListRef = useRef<FlatList>(null);
+  // const flatListRef = useRef<FlatList>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const handleNext = () => {
-    if (currentIndex < perguntas.length - 1) {
-      const nextIndex = currentIndex + 1;
-      setCurrentIndex(nextIndex);
-      flatListRef.current?.scrollToIndex({ index: nextIndex });
-    } else {
-      notify({
-        message: "Quiz finalizado!",
-        type: "success",
-        open: true,
-      });
-    }
-  };
+  // const handleNext = () => {
+  //   if (currentIndex < perguntas.length - 1) {
+  //     const nextIndex = currentIndex + 1;
+  //     setCurrentIndex(nextIndex);
+  //     flatListRef.current?.scrollToIndex({ index: nextIndex });
+  //   } else {
+  //     notify({
+  //       message: "Quiz finalizado!",
+  //       type: "success",
+  //       open: true,
+  //     });
+  //   }
+  // };
 
   if (isError) {
     return (
@@ -54,39 +53,39 @@ export default function QuizScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-    
+    <View style={styles.container}>
       <Text style={styles.title}>Hora do Quiz!</Text>
-
       <FlatList
-        ref={flatListRef}
+        keyExtractor={(item) =>
+          item?.id_quest.toString() || Math.random().toString()
+        }
         data={perguntas}
         horizontal
         scrollEnabled={false}
         pagingEnabled
         showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item.id}
         renderItem={({ item, index }) => (
           <View style={[styles.page, { width }]}>
             <View style={styles.questionCard}>
               <Text style={styles.question}>
-                {index + 1}. {item.pergunta}
+                {index + 1}. {item.enunciado}
               </Text>
             </View>
           </View>
         )}
-        onMomentumScrollEnd={(e) => {
-          const newIndex = Math.round(e.nativeEvent.contentOffset.x / width);
-          setCurrentIndex(newIndex);
-        }}ListFooterComponent={()=><TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-        <Text style={styles.nextButtonText}>
-          {currentIndex < perguntas.length - 1 ? "Próxima" : "Finalizar"}
-        </Text>
-      </TouchableOpacity>}
-
+        ListEmptyComponent={() => <Text>Nenhuma pergunta cadastrada</Text>}
+        // onMomentumScrollEnd={(e) => {
+        //   const newIndex = Math.round(e.nativeEvent.contentOffset.x / width);
+        //   setCurrentIndex(newIndex);
+        // }}
+        // ListFooterComponent={() => (
+        //   <TouchableOpacity style={styles.nextButton} onPress={() => {}}>
+        //     <Text style={styles.nextButtonText}>
+        //       {currentIndex < perguntas.length - 1 ? "Próxima" : "Finalizar"}
+        //     </Text>
+        //   </TouchableOpacity>
+        // )}
       />
-
-      
 
       {/* Snackbar */}
       <Portal>
@@ -108,7 +107,7 @@ export default function QuizScreen() {
           </Snackbar>
         ) : null}
       </Portal>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -116,9 +115,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#1E3A8A", // fundo azul
-    paddingTop: 40,
-    paddingBottom: 40,
-    paddingHorizontal: 20,
+    // paddingTop: 40,
+    // paddingBottom: 40,
+    // paddingHorizontal: 20,
   },
   title: {
     fontSize: 24,
@@ -131,7 +130,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     height: height * 0.5,
-    flex: 1
+    flex: 1,
   },
   questionCard: {
     backgroundColor: "#3B82F6",

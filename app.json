@@ -15,7 +15,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.project_quiz"
+      "bundleIdentifier": "com.anonymous.quiz"
     },
     "android": {
       "adaptiveIcon": {
@@ -35,11 +35,7 @@
       "output": "static",
       "favicon": "./assets/adaptive-icon.png"
     },
-    "plugins": [
-      "expo-router",
-      "expo-font",
-      "expo-web-browser"
-    ],
+    "plugins": ["expo-router", "expo-font", "expo-web-browser"],
     "experiments": {
       "typedRoutes": true
     }
