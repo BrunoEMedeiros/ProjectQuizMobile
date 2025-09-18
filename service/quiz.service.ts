@@ -2,7 +2,7 @@ import { api } from "@/utils/axios.config";
 import { AxiosError } from "axios";
 
 type Pergunta = {
-  id_quest: string;
+  id_quest: number;
   enunciado: string;
   alt_a: string;
   alt_b: string;
