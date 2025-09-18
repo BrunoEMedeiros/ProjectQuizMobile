@@ -1,28 +1,15 @@
 import React from "react";
 import { Pressable, Text, View, FlatList, StyleSheet } from "react-native";
-import { Button, Portal, Snackbar, TextInput } from "react-native-paper";
-import { Controller } from "react-hook-form";
-import useLoginViewModel from "@/ViewModel/useLoginViewModel";
-import { useSnackBarContext } from "@/context/snackbar.context";
 import { useRouter } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
 import useScoreViewModel from "@/ViewModel/useScoreVIewModel";
 import RankingCard from "@/components/RankingCard/RankingCard";
-import { getValueFromStorage } from "@/utils/async-storage";
 const ScorePage = () => {
   const { userId, data, isError, error, status } = useScoreViewModel();
   const router = useRouter();
 
   return (
     <View style={styles.container}>
-      <View className="flex-row justify-between items-center p-8">
-        <Text
-          numberOfLines={2}
-          adjustsFontSizeToFit={true}
-          style={styles.title}
-        >
-          Melhores pontuações
-        </Text>
+      <View className="justify-between items-center p-8 gap-4">
         <Pressable
           onPress={async () => {
             if (await userId) {
@@ -30,10 +17,12 @@ const ScorePage = () => {
             }
             return router.navigate("/login");
           }}
-          className="bg-black w-24 h-16 justify-center items-center border rounded-md"
+          className="w-full h-16 justify-center items-center rounded-lg"
+          style={{ backgroundColor: "#FFC31F", elevation: 6 }}
         >
-          <Text className="text-white">Jogar</Text>
+          <Text className="text-xl">Jogar</Text>
         </Pressable>
+        <Text style={{ marginTop: 30, fontSize: 50 }}>🏆</Text>
       </View>
       <FlatList
         keyExtractor={(item) => item.id_user.toString()}
@@ -42,8 +31,14 @@ const ScorePage = () => {
         contentContainerStyle={{ flexGrow: 1 }}
         columnWrapperStyle={{ gap: 10 }}
         showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => {
-          return <RankingCard score={item.total_acertos} name={item.nome} />;
+        renderItem={({ item, index }) => {
+          return (
+            <RankingCard
+              score={item.total_acertos}
+              name={item.nome}
+              index={index}
+            />
+          );
         }}
         ItemSeparatorComponent={() => (
           <View style={{ height: 10, width: 10 }}></View>
@@ -59,15 +54,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#a6e1fa",
+    paddingBottom: 50,
   },
   title: {
     fontSize: 22,
     fontWeight: "bold",
     marginBottom: 22,
     textAlign: "center",
-    color: "#FA9F42",
-    width: 160,
   },
   input: {
     borderWidth: 1,

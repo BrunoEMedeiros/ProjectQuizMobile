@@ -13,8 +13,9 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import Feather from "@expo/vector-icons/Feather";
+import { getValueFromStorage, removeData } from "@/utils/async-storage";
 
-export default function Header(props: NativeStackHeaderProps) {
+export default async function Header(props: NativeStackHeaderProps) {
   const canGoBack = props.navigation.canGoBack();
   const insets = useSafeAreaInsets();
 
@@ -37,6 +38,17 @@ export default function Header(props: NativeStackHeaderProps) {
         style={styles.headerLogo}
         source={require("../../assets/logo.png")}
       />
+      {canGoBack && (await getValueFromStorage()) ? (
+        <Pressable
+          onPress={async () => {
+            await removeData();
+            props.navigation.goBack();
+          }}
+          style={{ backgroundColor: "#fff", padding: 16, borderRadius: 20 }}
+        >
+          <Text style={{ fontSize: 16 }}>Sair</Text>
+        </Pressable>
+      ) : null}
     </View>
   );
 }
@@ -45,9 +57,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#e6f2ff",
-    // justifyContent: "space-around",
-    borderRadius: 12,
+    backgroundColor: "#0e6ba8",
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
