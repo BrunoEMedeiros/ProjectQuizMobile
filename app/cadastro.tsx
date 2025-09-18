@@ -150,3 +150,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+
+// Teclado cobre senha arrumar

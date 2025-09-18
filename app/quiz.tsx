@@ -11,7 +11,7 @@ import {
 import { useQuizViewModel } from "@/ViewModel/useQuizViewModel";
 import { Portal, Snackbar } from "react-native-paper";
 import { useSnackBarContext } from "@/context/snackbar.context";
-
+import AlternativesButton from "@/components/AlternativesButtons/AlternativesButtons";
 const { width, height } = Dimensions.get("window");
 
 export default function QuizScreen() {
@@ -52,6 +52,8 @@ export default function QuizScreen() {
     );
   }
 
+
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Hora do Quiz!</Text>
@@ -71,9 +73,14 @@ export default function QuizScreen() {
                 {index + 1}. {item.enunciado}
               </Text>
             </View>
+            <AlternativesButton alt_a={item.alt_a} alt_b={item.alt_b} alt_c={item.alt_c} alt_d={item.alt_d} alt_e={item.alt_e}/>
           </View>
+          
         )}
         ListEmptyComponent={() => <Text>Nenhuma pergunta cadastrada</Text>}
+        // ref={fla
+
+
         // onMomentumScrollEnd={(e) => {
         //   const newIndex = Math.round(e.nativeEvent.contentOffset.x / width);
         //   setCurrentIndex(newIndex);
@@ -87,6 +94,7 @@ export default function QuizScreen() {
         // )}
       />
 
+      
       {/* Snackbar */}
       <Portal>
         {open ? (
@@ -114,7 +122,7 @@ export default function QuizScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1E3A8A", // fundo azul
+    backgroundColor: "#A6E1FA", // fundo azul
     // paddingTop: 40,
     // paddingBottom: 40,
     // paddingHorizontal: 20,
@@ -124,7 +132,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 20,
-    color: "#fff",
+    color: "#000",
   },
   page: {
     justifyContent: "center",
@@ -137,6 +145,11 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 8,
     width: "90%",
+    display: "flex",
+    justifyContent:"flex-start",
+    alignItems:"center",
+     position: "absolute",
+   top: 0,
   },
   question: {
     fontSize: 18,
@@ -166,3 +179,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+
+
+// 
