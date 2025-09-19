@@ -1,7 +1,7 @@
 import { api } from "@/utils/axios.config";
 import { AxiosError } from "axios";
 
-type Pergunta = {
+export type Pergunta = {
   id_quest: number;
   enunciado: string;
   alt_a: string;
@@ -11,13 +11,21 @@ type Pergunta = {
   alt_e: string;
 };
 
-// type fetchPerguntasProps = {
-//     perguntas: string,
-//     alternativa_a: string,
-//     alternativa_b: string,
-//     alternativa_c: string,
-//     alternativa_d: string,
-// }
+export type Answer = {
+  id_quest: number;
+  resposta: string;
+};
+
+export type QuestionCorrection = {
+  id_user: number;
+  respostas: Answer[];
+};
+
+export type CorrectionResponse = {
+  mensagem: string;
+  acertosTentativa: number;
+  pontuacao: number;
+};
 
 export async function fecthPerguntas(): Promise<Pergunta[] | null> {
   try {
@@ -32,5 +40,22 @@ export async function fecthPerguntas(): Promise<Pergunta[] | null> {
       }
     }
     return null;
+  }
+}
+
+export async function handleFinishQuiz({
+  id_user,
+  respostas,
+}: QuestionCorrection) {
+  try {
+    const { data } = await api.post<CorrectionResponse>("/perguntas/correcao", {
+      id_user,
+      respostas,
+    });
+    return data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      throw new Error(error.message);
+    }
   }
 }

@@ -1,181 +1,90 @@
-import React, { useRef, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Dimensions,
-  ActivityIndicator,
-} from "react-native";
-import { useQuizViewModel } from "@/ViewModel/useQuizViewModel";
-import { Portal, Snackbar } from "react-native-paper";
-import { useSnackBarContext } from "@/context/snackbar.context";
-import AlternativesButton from "@/components/AlternativesButtons/AlternativesButtons";
-import QuestionCard from "@/components/QuestionCard/QuestionCard";
-const { width, height } = Dimensions.get("window");
-
-
-export default function QuizScreen() {
-  const { perguntas, isError, error } = useQuizViewModel();
-  const { message, open, notify } = useSnackBarContext();
-  
-  const flatListRef = useRef<FlatList<any> | null>(null);
-
-    // uso seguro
-    flatListRef.current?.scrollToIndex({ index: 0 });
-
-
-  // const flatListRef = useRef<FlatList>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  // const handleNext = () => {
-  //   if (currentIndex < perguntas.length - 1) {
-  //     const nextIndex = currentIndex + 1;
-  //     setCurrentIndex(nextIndex);
-  //     flatListRef.current?.scrollToIndex({ index: nextIndex });
-  //   } else {
-  //     notify({
-  //       message: "Quiz finalizado!",
-  //       type: "success",
-  //       open: true,
-  //     });
-  //   }
-  // };
-
-  if (isError) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.error}>Erro: {String(error)}</Text>
-      </View>
-    );
-  }
-
-  if (!perguntas.length) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#fff" />
-        <Text style={styles.loadingText}>Carregando perguntas...</Text>
-      </View>
-    );
-  }
-
-
+import React from "react";
+import { Pressable, Text, View, FlatList, StyleSheet } from "react-native";
+import { useRouter } from "expo-router";
+import useScoreViewModel from "@/ViewModel/useScoreVIewModel";
+import RankingCard from "@/components/RankingCard/RankingCard";
+const ScorePage = () => {
+  const { userId, data, isError, error, status } = useScoreViewModel();
+  const router = useRouter();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Hora do Quiz!</Text>
+      <View className="justify-between items-center p-8 gap-4">
+        <Pressable
+          onPress={async () => {
+            if (await userId) {
+              return router.push("/quiz");
+            }
+            return router.push("/login");
+          }}
+          className="w-full h-16 justify-center items-center rounded-lg"
+          style={{ backgroundColor: "#FFC31F", elevation: 6 }}
+        >
+          <Text className="text-xl">Jogar</Text>
+        </Pressable>
+        <Text style={{ marginTop: 30, fontSize: 50 }}>🏆</Text>
+      </View>
       <FlatList
-      style={{flex: 1}}
-        keyExtractor={(item) =>
-          item?.id_quest.toString() || Math.random().toString()
-        }
-        data={perguntas}
-        horizontal
-        scrollEnabled={false}
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
+        keyExtractor={(item) => item.id_user.toString()}
+        data={data}
+        numColumns={2}
+        contentContainerStyle={{ flexGrow: 1 }}
+        columnWrapperStyle={{ gap: 10 }}
+        showsVerticalScrollIndicator={false}
         renderItem={({ item, index }) => {
-          return (<QuestionCard item={item} index={perguntas.length} currentIndex={index}  flatListRef={flatListRef} />)
+          return (
+            <RankingCard
+              score={item.total_acertos}
+              name={item.nome}
+              index={index}
+            />
+          );
         }}
+        ItemSeparatorComponent={() => (
+          <View style={{ height: 10, width: 10 }}></View>
+        )}
       />
-
-      
-      {/* Snackbar */}
-      <Portal>
-        {open ? (
-          <Snackbar
-            visible={true}
-            theme={{
-              colors: {
-                inverseSurface: "#070A0E",
-                inverseOnSurface: "#F2F3F4",
-              },
-            }}
-            onDismiss={() => {
-              notify({ message: null, open: false, type: "info" });
-            }}
-            wrapperStyle={{ bottom: 40, alignSelf: "stretch" }}
-          >
-            {message}
-          </Snackbar>
-        ) : null}
-      </Portal>
     </View>
   );
-}
+};
+
+export default ScorePage;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#A6E1FA", // fundo azul
-    // paddingTop: 40,
-    // paddingBottom: 40,
-    // paddingHorizontal: 20,
+    padding: 20,
+    backgroundColor: "#a6e1fa",
+    paddingBottom: 50,
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "bold",
+    marginBottom: 22,
     textAlign: "center",
-    marginBottom: 20,
-    color: "#000",
   },
-  page: {
-    justifyContent: "center",
-    alignItems: "center",
-    height: height * 0.5,
-    flex: 1,
-  },
-  questionCard: {
-    backgroundColor: "#3B82F6",
-    padding: 20,
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
     borderRadius: 8,
-    width: "90%",
-    display: "flex",
-    justifyContent:"flex-start",
-    alignItems:"center",
-     position: "absolute",
-   top: 0,
-  },
-  question: {
-    fontSize: 18,
-    color: "#fff",
-    textAlign: "center",
-  },
-  nextButton: {
-  backgroundColor: "#2563EB",
-  padding: 40,
-  borderRadius: 8,
-  alignItems: "center",
-  justifyContent: "center",
-  width: "48%"
-  },
-
-  buttonsContainer: {
-  flexDirection: "row",
-  flexWrap: "wrap",
-  justifyContent: "space-between",
-  gap: 10,
-  
-},
-
-  nextButtonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
+    padding: 10,
+    marginBottom: 10,
   },
   error: {
     color: "red",
-    textAlign: "center",
-    marginVertical: 20,
+    marginBottom: 8,
   },
-  loadingText: {
-    marginTop: 10,
-    color: "#fff",
-    fontSize: 16,
-    textAlign: "center",
+  card: {
+    marginTop: 20,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    backgroundColor: "#f9f9f9",
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 8,
   },
 });
-
-
-// 

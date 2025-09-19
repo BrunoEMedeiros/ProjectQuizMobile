@@ -121,10 +121,11 @@ const CadastrePage = () => {
         {open ? (
           <Snackbar
             visible={open}
+            duration={2000}
             theme={{
               colors: {
-                inverseSurface: "#070A0E", // Background color
-                inverseOnSurface: "#F2F3F4", // Text/icon color
+                inverseSurface: "#F2F3F4",
+                inverseOnSurface: "#070A0E",
               },
             }}
             onDismiss={() => {
@@ -150,6 +151,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
-
 
 // Teclado cobre senha arrumar
