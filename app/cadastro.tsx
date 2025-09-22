@@ -3,7 +3,15 @@ import { useCreateAccountViewModel } from "@/ViewModel/useCreateAccountViewModel
 import useScoreViewModel from "@/ViewModel/useScoreVIewModel";
 import { useRouter } from "expo-router";
 import { Controller } from "react-hook-form";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { Button, Portal, Snackbar, TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -22,7 +30,11 @@ const CadastrePage = () => {
   const router = useRouter();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
+      style={styles.container}
+    >
       <Text className="text-2xl text-center">Cadastre-se</Text>
       <View className="gap-6 p-6 w-full">
         <Controller
@@ -137,7 +149,7 @@ const CadastrePage = () => {
           </Snackbar>
         ) : null}
       </Portal>
-    </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -147,8 +159,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#fff",
-    justifyContent: "center",
+    backgroundColor: "#A6E1FA",
+    alignItems: "center",
   },
 });
 

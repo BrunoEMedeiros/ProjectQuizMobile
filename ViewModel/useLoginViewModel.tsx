@@ -38,6 +38,7 @@ export const useLoginViewModel = () => {
     onSuccess: async (data) => {
       if (data) {
         await storeData(data.id_user.toString());
+        router.dismissAll();
         router.replace("/quiz");
       } else {
         notify({

@@ -9,6 +9,7 @@ import {
 } from "@/service/cadastro.service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Resolver, useForm } from "react-hook-form";
 
@@ -16,6 +17,7 @@ export const useCreateAccountViewModel = () => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(true);
 
   const { notify } = useSnackBarContext();
+  const router = useRouter();
 
   const {
     register,
@@ -44,7 +46,12 @@ export const useCreateAccountViewModel = () => {
       await handleCreateAccount({ email: email, senha: senha, nome: nome }),
     onSuccess: async (data) => {
       if (data) {
-        console.info("Conta criada");
+        notify({
+          message: "Conta criada!",
+          open: true,
+          type: "success",
+        });
+        router.back();
       } else {
         notify({
           message: "Usuario ja cadastrado",

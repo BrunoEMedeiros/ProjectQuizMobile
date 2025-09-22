@@ -1,23 +1,16 @@
 import { NativeStackHeaderProps } from "@react-navigation/native-stack";
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  Pressable,
-} from "react-native";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { View, Text, StyleSheet, Image, Pressable } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Feather from "@expo/vector-icons/Feather";
 import { getValueFromStorage, removeData } from "@/utils/async-storage";
+import { useRouter } from "expo-router";
 
 export default async function Header(props: NativeStackHeaderProps) {
   const canGoBack = props.navigation.canGoBack();
   const insets = useSafeAreaInsets();
+
+  const router = useRouter();
 
   return (
     <View
@@ -42,7 +35,8 @@ export default async function Header(props: NativeStackHeaderProps) {
         <Pressable
           onPress={async () => {
             await removeData();
-            props.navigation.goBack();
+            router.dismissAll();
+            router.replace("/");
           }}
           style={{ backgroundColor: "#fff", padding: 16, borderRadius: 20 }}
         >

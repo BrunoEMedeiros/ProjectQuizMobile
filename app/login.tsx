@@ -4,7 +4,14 @@ import useLoginViewModel from "@/ViewModel/useLoginViewModel";
 import useScoreViewModel from "@/ViewModel/useScoreVIewModel";
 import { Link, useRouter } from "expo-router";
 import { Controller } from "react-hook-form";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { Button, Portal, Snackbar, TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -23,7 +30,7 @@ const CadastrePage = () => {
   const router = useRouter();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text className="text-2xl text-center">Venha jogar !</Text>
       <View className="gap-6 p-6 w-full">
         <Controller
@@ -101,7 +108,7 @@ const CadastrePage = () => {
           </Snackbar>
         ) : null}
       </Portal>
-    </SafeAreaView>
+    </ScrollView>
   );
 };
 
@@ -111,6 +118,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#A6E1FA",
   },
 });

@@ -114,7 +114,7 @@ export default function QuizScreen() {
           visible={openModal}
           onDismiss={() => {
             setOpenModal(!openModal);
-            router.navigate("/");
+            router.push("/");
           }}
           contentContainerStyle={{
             backgroundColor: "white",
